@@ -136,6 +136,24 @@ class Timer extends React.Component {
             length: this.props.length,
             date: new Date().toLocaleTimeString()
         };
+        this.tick = this.tick.bind(this);
+    }
+
+    tick() {
+        this.setState({
+            date: new Date().toLocaleTimeString()
+        });
+    }
+
+    componentDidMount() {
+        let timerID = setInterval(
+            this.tick,
+            1000
+        );
+    }
+
+    componentWillUnmount() {
+        clearInterval(timerID);
     }
 
     render() {
@@ -144,7 +162,7 @@ class Timer extends React.Component {
             <div className="timer-container">
                 <div className="timer-wrapper">
                     <label id="timer-label">Session</label>
-                    <p id="time-left">25:00</p>
+                    <p id="time-left">{this.state.date}</p>
                 </div>
                 <button id="start_stop">
                     Start/Stop
