@@ -1,10 +1,12 @@
 const gulp = require('gulp');
 const babel = require('gulp-babel');
 
-gulp.task('default', () =>
+exports.default = () =>
     gulp.src('index.js')
         .pipe(babel({
-            presets: ['@babel/env']
+            presets: [
+                '@babel/preset-env',
+                "@babel/preset-react"
+            ]
         }))
-        .pipe(gulp.dest('dist'))
-);
+        .pipe(gulp.dest('dist'));

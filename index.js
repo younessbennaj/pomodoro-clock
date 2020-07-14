@@ -20,3 +20,8 @@
 /*/
 
 let app = document.getElementById("#app");
+
+let test = () => {
+    console.log(this);
+}
+
