@@ -21,6 +21,12 @@
 
 let app = document.getElementById("#app");
 
+const element = (
+    <h1 className="greeting">
+        Bonjour, monde !
+    </h1>
+);
+
 let test = () => {
     console.log(this);
 }

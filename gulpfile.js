@@ -5,8 +5,14 @@ exports.default = () =>
     gulp.src('index.js')
         .pipe(babel({
             presets: [
-                '@babel/preset-env',
                 "@babel/preset-react"
-            ]
+            ],
+            env: {
+                production: {
+                    presets: [
+                        "@babel/preset-env"
+                    ]
+                }
+            }
         }))
         .pipe(gulp.dest('dist'));
