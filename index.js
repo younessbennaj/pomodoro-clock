@@ -5,18 +5,6 @@
     within id="session-length" should return to 25, and the element with
     id="time-left" should reset to it's default state.
 
-    2) When I click the element with the id of break-decrement, the value within
-    id="break-length" decrements by a value of 1, and I can see the updated value.
-
-    3) break-increment => id="break-length" + 1
-
-    4) session-decrement => id="session-length" - 1
-
-    5) session-increment => id="session-length" + 1
-
-    6) I should not be able to set a session or break length to <= 0.
-
-    7) I should not be able to set a session or break length to > 60.
 /*/
 
 let app = document.getElementById("app");
@@ -141,15 +129,18 @@ class Counter extends React.Component {
     }
 }
 
+class Timer extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            length: this.props.length,
+            date: new Date().toLocaleTimeString()
+        };
+    }
 
+    render() {
 
-function App(props) {
-    const app = (
-        <React.Fragment>
-            <div className="time-btn-container">
-                <Counter id={'break'} default={5} label={'Break Length'} />
-                <Counter id={'session'} default={25} label={'Session Length'} />
-            </div>
+        let timer = (
             <div className="timer-container">
                 <div className="timer-wrapper">
                     <label id="timer-label">Session</label>
@@ -162,6 +153,20 @@ function App(props) {
                     Reset
                 </button>
             </div>
+        )
+
+        return timer;
+    }
+}
+
+function App(props) {
+    const app = (
+        <React.Fragment>
+            <div className="time-btn-container">
+                <Counter id={'break'} default={5} label={'Break Length'} />
+                <Counter id={'session'} default={25} label={'Session Length'} />
+            </div>
+            <Timer length={25} />
         </ React.Fragment>
     );
     return app;
