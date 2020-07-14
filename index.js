@@ -133,15 +133,20 @@ class Timer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            length: this.props.length,
+            duration: moment.duration(this.props.length, 'minutes'),
             date: new Date().toLocaleTimeString()
         };
         this.tick = this.tick.bind(this);
     }
 
     tick() {
+        //We don't want to mutate duration in local state
+        //Each tick with substract 1 second
+        let duration = this.state.duration.subtract(1, 's');
+        //Update our duration with setState()
+        console.log(duration);
         this.setState({
-            date: new Date().toLocaleTimeString()
+            duration
         });
     }
 
@@ -162,7 +167,7 @@ class Timer extends React.Component {
             <div className="timer-container">
                 <div className="timer-wrapper">
                     <label id="timer-label">Session</label>
-                    <p id="time-left">{this.state.date}</p>
+                    <p id="time-left">{this.state.duration.minutes()}:{this.state.duration.seconds()}</p>
                 </div>
                 <button id="start_stop">
                     Start/Stop
@@ -189,6 +194,10 @@ function App(props) {
     );
     return app;
 }
+
+let time = moment.duration(25, 'minutes');
+console.log(time.minutes());
+console.log(time.seconds());
 
 ReactDOM.render(<App />, app);
 
