@@ -41,7 +41,6 @@ class Counter extends React.Component {
             
         */
         super(props);
-        console.log(this);
 
         /*
             * Local state * 
@@ -57,11 +56,41 @@ class Counter extends React.Component {
         */
 
         this.state = {
-            count: this.props.count
+            count: 0
         };
     }
 
-    //Prototype methods => instance inherit from this (accessible via __proto__ props)
+    /*
+
+        Component Lifecycle 
+    
+    */
+
+    //After rendering (DOM available)
+    componentDidMount() {
+        //use arrow function to pass context inside the increment method
+        setTimeout(() => this.increment(), 1000);
+    }
+
+    //Prototype methods => instances inherit from methods attached to the prototype props
+    //(accessible via __proto__ props)
+
+    //setState() method inherited from the React.Component() class
+
+    increment() {
+        //destructuring => no mutation of this.state
+        console.log(this.state);
+        // let { count } = this.state;
+        // this.setState({
+        //     count: ++count
+        // })
+    }
+
+    decrement() {
+        let count = this.state.count;
+        console.log(--count);
+    }
+
     //render() => called each time the view is updated
     render() {
 
@@ -76,7 +105,7 @@ class Counter extends React.Component {
         let counter = (
             <div className="counter-wrapper">
                 <label id="label" htmlFor="">counter</label>
-                <p id="length">0</p>
+                <p id="length">{this.state.count}</p>
                 <button id="increment">count -</button>
                 <button id="decrement">count +</button>
             </div>
@@ -91,7 +120,7 @@ let counter = new Counter({ count: 0 });
 
 
 function App(props) {
-    const app = <Counter count={0} />;
+    const app = <Counter />;
     return app;
 }
 
