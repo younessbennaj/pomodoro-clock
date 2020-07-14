@@ -1,7 +1,7 @@
 const gulp = require('gulp');
 const babel = require('gulp-babel');
 
-exports.default = () =>
+function javascript() {
     gulp.src('index.js')
         .pipe(babel({
             presets: [
@@ -16,3 +16,8 @@ exports.default = () =>
             }
         }))
         .pipe(gulp.dest('dist'));
+}
+
+exports.default = () => {
+    gulp.watch('index.js', javascript);
+}
