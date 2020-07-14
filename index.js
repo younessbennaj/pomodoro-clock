@@ -61,7 +61,7 @@ class Counter extends React.Component {
         */
 
         this.state = {
-            count: this.props.start
+            count: this.props.default
         };
 
         //We need to bind this inside our handler to the component itself
@@ -124,6 +124,7 @@ class Counter extends React.Component {
     //render() => called each time the view is updated
     render() {
 
+        let { id, label } = this.props;
         //Our jsx syntax component => react element returned by React.createElement( type , props ,children)
         //=> object that describes our element
 
@@ -134,10 +135,10 @@ class Counter extends React.Component {
         //Therfore, here we will only update modified nodes.
         let counter = (
             <div className="counter-wrapper">
-                <label id="label" htmlFor="">{this.props.label}</label>
-                <p id="length">{this.state.count}</p>
-                <button onClick={this.handleDecrement} id="decrement">count -</button>
-                <button onClick={this.handleIncrement} id="increment">count +</button>
+                <label id={`${id}-label`} htmlFor="">{label}</label>
+                <p id={`${id}-length`}>{this.state.count}</p>
+                <button onClick={this.handleDecrement} id={`${id}-decrement`}>count -</button>
+                <button onClick={this.handleIncrement} id={`${id}-increment`}>count +</button>
             </div>
         );
 
@@ -149,7 +150,12 @@ class Counter extends React.Component {
 let counter = <Counter start={25} label={'Counter'} />;
 
 function App(props) {
-    const app = counter;
+    const app = (
+        <div className="time-btn-container">
+            <Counter id={'break'} default={5} label={'Counter'} />
+            <Counter id={'session'} default={25} label={'Counter'} />
+        </div>
+    );
     return app;
 }
 
