@@ -19,15 +19,18 @@
     7) I should not be able to set a session or break length to > 60.
 /*/
 
-let app = document.getElementById("#app");
-
+let app = document.getElementById("app");
+let other = "other var";
+let update = "update";
 const element = (
     <h1 className="greeting">
-        Bonjour, monde !
+        Bonjour, monde ! <span>8</span>
     </h1>
 );
 
 let test = () => {
     console.log(this);
 }
+
+ReactDOM.render(element, app);
 
