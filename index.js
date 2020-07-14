@@ -52,12 +52,23 @@ class Counter extends React.Component {
             mutation are not allowed. Thus, we need to use a local state to work with
             some values without modifying inital props. We store this local state in 
             a .state proprety. This proprety will be acessible in our component. 
+
+            We can asign the local state only in the contructor() method.
+
+            We can't modidy directly the local state, we must use this.setState() 
+            method.
         
         */
 
         this.state = {
             count: 0
         };
+
+        //We need to bind this inside our handler to the component itself
+        //We can also use arrow function behavior to do this, but it may 
+        //have so side effect (re-rendering issues).
+        this.handleIncrement = this.handleIncrement.bind(this);
+        this.handleDecrement = this.handleDecrement.bind(this);
     }
 
     /*
@@ -69,7 +80,7 @@ class Counter extends React.Component {
     //After rendering (DOM available)
     componentDidMount() {
         //use arrow function to pass context inside the increment method
-        setTimeout(() => this.increment(), 1000);
+        //setTimeout(() => this.increment(), 4000);
     }
 
     //Prototype methods => instances inherit from methods attached to the prototype props
@@ -79,16 +90,35 @@ class Counter extends React.Component {
 
     increment() {
         //destructuring => no mutation of this.state
-        console.log(this.state);
-        // let { count } = this.state;
-        // this.setState({
-        //     count: ++count
-        // })
+        let { count } = this.state;
+        this.setState({
+            count: ++count
+        })
     }
 
     decrement() {
-        let count = this.state.count;
-        console.log(--count);
+        let { count } = this.state;
+        this.setState({
+            count: --count
+        })
+    }
+
+    /*
+        Event Handlers
+
+        We pass event handlers as function in jsx.
+
+            e.g:  <button onClick={handleClick}>
+
+        
+    */
+
+    handleIncrement() {
+        this.increment();
+    }
+
+    handleDecrement() {
+        this.decrement();
     }
 
     //render() => called each time the view is updated
@@ -106,8 +136,8 @@ class Counter extends React.Component {
             <div className="counter-wrapper">
                 <label id="label" htmlFor="">counter</label>
                 <p id="length">{this.state.count}</p>
-                <button id="increment">count -</button>
-                <button id="decrement">count +</button>
+                <button onClick={this.handleDecrement} id="decrement">count -</button>
+                <button onClick={this.handleIncrement} id="increment">count +</button>
             </div>
         );
 
@@ -116,11 +146,10 @@ class Counter extends React.Component {
     }
 }
 
-let counter = new Counter({ count: 0 });
-
+let counter = <Counter />;
 
 function App(props) {
-    const app = <Counter />;
+    const app = counter;
     return app;
 }
 
