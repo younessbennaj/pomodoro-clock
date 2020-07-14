@@ -134,8 +134,64 @@ class Timer extends React.Component {
         super(props);
         this.state = {
             length: this.props.length,
-            date: new Date().toLocaleTimeString()
+            duration: moment.duration(this.props.length, 'minutes'),
+            isStarted: false
         };
+        this.tick = this.tick.bind(this);
+        this.handleStartPause = this.handleStartPause.bind(this);
+        this.handleReset = this.handleReset.bind(this);
+    }
+
+    //Prototype methods
+
+    tick() {
+        //We don't want to mutate duration in local state
+        //Each tick with substract 1 second
+        let duration = this.state.duration.subtract(1, 's');
+        //Update our duration with setState()
+        this.setState({
+            duration
+        });
+    }
+
+    //Lifecycle methods
+
+    componentDidMount() {
+
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timerID);
+    }
+
+    //Handle methods
+
+    handleStartPause() {
+        //Click on start
+        if (!this.state.isStarted) {
+            //Launch the timer
+            this.timerID = setInterval(
+                this.tick,
+                1000
+            );
+            //Set isStarted to true
+            this.setState({ isStarted: true });
+        }
+        //Click on pause
+        else {
+            //Stop the timer
+            clearInterval(this.timerID);
+            this.setState({ isStarted: false });
+        }
+
+    }
+
+    handleReset() {
+        //Stop the timer
+        clearInterval(this.timerID);
+        this.setState({ isStarted: false });
+        //Reset the timer to the length duration
+        this.setState({ duration: moment.duration(this.state.length, 'minutes') });
     }
 
     render() {
@@ -144,12 +200,12 @@ class Timer extends React.Component {
             <div className="timer-container">
                 <div className="timer-wrapper">
                     <label id="timer-label">Session</label>
-                    <p id="time-left">25:00</p>
+                    <p id="time-left">{this.state.duration.minutes()}:{this.state.duration.seconds()}</p>
                 </div>
-                <button id="start_stop">
+                <button onClick={this.handleStartPause} id="start_stop">
                     Start/Stop
                 </button>
-                <button id="reset">
+                <button onClick={this.handleReset} id="reset">
                     Reset
                 </button>
             </div>
@@ -171,6 +227,10 @@ function App(props) {
     );
     return app;
 }
+
+let time = moment.duration(25, 'minutes');
+console.log(time.minutes());
+console.log(time.seconds());
 
 ReactDOM.render(<App />, app);
 
