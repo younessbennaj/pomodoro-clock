@@ -166,12 +166,22 @@ class Timer extends React.Component {
 
     handleStartPause() {
         //Click on start
-        this.timerID = setInterval(
-            this.tick,
-            1000
-        );
+        if (!this.state.isStarted) {
+            //Launch the timer
+            this.timerID = setInterval(
+                this.tick,
+                1000
+            );
+            //Set isStarted to true
+            this.setState({ isStarted: true });
+        }
         //Click on pause
-        //clearInterval(this.timerID);
+        else {
+            //Stop the timer
+            clearInterval(this.timerID);
+            this.setState({ isStarted: false });
+        }
+
     }
 
     render() {
