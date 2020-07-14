@@ -21,11 +21,6 @@
 
 let app = document.getElementById("app");
 
-
-let test = () => {
-    //console.log({new Date().toLocaleTimeString()});
-}
-
 class Counter extends React.Component {
 
     constructor(props) {
@@ -91,16 +86,15 @@ class Counter extends React.Component {
     increment() {
         //destructuring => no mutation of this.state
         let { count } = this.state;
-        this.setState({
-            count: ++count
-        })
+        //I should not be able to set a session or break length to > 60
+        if (count < 60) this.setState({ count: ++count });
+
     }
 
     decrement() {
         let { count } = this.state;
-        this.setState({
-            count: --count
-        })
+        //I should not be able to set a session or break length to <= 0
+        if (count > 1) this.setState({ count: --count });
     }
 
     /*
@@ -147,14 +141,28 @@ class Counter extends React.Component {
     }
 }
 
-let counter = <Counter start={25} label={'Counter'} />;
+
 
 function App(props) {
     const app = (
-        <div className="time-btn-container">
-            <Counter id={'break'} default={5} label={'Counter'} />
-            <Counter id={'session'} default={25} label={'Counter'} />
-        </div>
+        <React.Fragment>
+            <div className="time-btn-container">
+                <Counter id={'break'} default={5} label={'Break Length'} />
+                <Counter id={'session'} default={25} label={'Session Length'} />
+            </div>
+            <div className="timer-container">
+                <div className="timer-wrapper">
+                    <label id="timer-label">Session</label>
+                    <p id="time-left">25:00</p>
+                </div>
+                <button id="start_stop">
+                    Start/Stop
+                </button>
+                <button id="reset">
+                    Reset
+                </button>
+            </div>
+        </ React.Fragment>
     );
     return app;
 }
