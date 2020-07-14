@@ -5,26 +5,9 @@
     within id="session-length" should return to 25, and the element with
     id="time-left" should reset to it's default state.
 
-    2) When I click the element with the id of break-decrement, the value within
-    id="break-length" decrements by a value of 1, and I can see the updated value.
-
-    3) break-increment => id="break-length" + 1
-
-    4) session-decrement => id="session-length" - 1
-
-    5) session-increment => id="session-length" + 1
-
-    6) I should not be able to set a session or break length to <= 0.
-
-    7) I should not be able to set a session or break length to > 60.
 /*/
 
 let app = document.getElementById("app");
-
-
-let test = () => {
-    //console.log({new Date().toLocaleTimeString()});
-}
 
 class Counter extends React.Component {
 
@@ -61,7 +44,7 @@ class Counter extends React.Component {
         */
 
         this.state = {
-            count: this.props.start
+            count: this.props.default
         };
 
         //We need to bind this inside our handler to the component itself
@@ -91,16 +74,15 @@ class Counter extends React.Component {
     increment() {
         //destructuring => no mutation of this.state
         let { count } = this.state;
-        this.setState({
-            count: ++count
-        })
+        //I should not be able to set a session or break length to > 60
+        if (count < 60) this.setState({ count: ++count });
+
     }
 
     decrement() {
         let { count } = this.state;
-        this.setState({
-            count: --count
-        })
+        //I should not be able to set a session or break length to <= 0
+        if (count > 1) this.setState({ count: --count });
     }
 
     /*
@@ -124,6 +106,7 @@ class Counter extends React.Component {
     //render() => called each time the view is updated
     render() {
 
+        let { id, label } = this.props;
         //Our jsx syntax component => react element returned by React.createElement( type , props ,children)
         //=> object that describes our element
 
@@ -134,10 +117,10 @@ class Counter extends React.Component {
         //Therfore, here we will only update modified nodes.
         let counter = (
             <div className="counter-wrapper">
-                <label id="label" htmlFor="">{this.props.label}</label>
-                <p id="length">{this.state.count}</p>
-                <button onClick={this.handleDecrement} id="decrement">count -</button>
-                <button onClick={this.handleIncrement} id="increment">count +</button>
+                <label id={`${id}-label`} htmlFor="">{label}</label>
+                <p id={`${id}-length`}>{this.state.count}</p>
+                <button onClick={this.handleDecrement} id={`${id}-decrement`}>count -</button>
+                <button onClick={this.handleIncrement} id={`${id}-increment`}>count +</button>
             </div>
         );
 
@@ -146,10 +129,46 @@ class Counter extends React.Component {
     }
 }
 
-let counter = <Counter start={25} label={'Counter'} />;
+class Timer extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            length: this.props.length,
+            date: new Date().toLocaleTimeString()
+        };
+    }
+
+    render() {
+
+        let timer = (
+            <div className="timer-container">
+                <div className="timer-wrapper">
+                    <label id="timer-label">Session</label>
+                    <p id="time-left">25:00</p>
+                </div>
+                <button id="start_stop">
+                    Start/Stop
+                </button>
+                <button id="reset">
+                    Reset
+                </button>
+            </div>
+        )
+
+        return timer;
+    }
+}
 
 function App(props) {
-    const app = counter;
+    const app = (
+        <React.Fragment>
+            <div className="time-btn-container">
+                <Counter id={'break'} default={5} label={'Break Length'} />
+                <Counter id={'session'} default={25} label={'Session Length'} />
+            </div>
+            <Timer length={25} />
+        </ React.Fragment>
+    );
     return app;
 }
 
