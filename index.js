@@ -61,7 +61,7 @@ class Counter extends React.Component {
         */
 
         this.state = {
-            count: 0
+            count: this.props.start
         };
 
         //We need to bind this inside our handler to the component itself
@@ -134,7 +134,7 @@ class Counter extends React.Component {
         //Therfore, here we will only update modified nodes.
         let counter = (
             <div className="counter-wrapper">
-                <label id="label" htmlFor="">counter</label>
+                <label id="label" htmlFor="">{this.props.label}</label>
                 <p id="length">{this.state.count}</p>
                 <button onClick={this.handleDecrement} id="decrement">count -</button>
                 <button onClick={this.handleIncrement} id="increment">count +</button>
@@ -146,7 +146,7 @@ class Counter extends React.Component {
     }
 }
 
-let counter = <Counter />;
+let counter = <Counter start={25} label={'Counter'} />;
 
 function App(props) {
     const app = counter;
