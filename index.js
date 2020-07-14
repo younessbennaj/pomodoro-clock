@@ -133,11 +133,13 @@ class Timer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            length: this.props.length,
             duration: moment.duration(this.props.length, 'minutes'),
             isStarted: false
         };
         this.tick = this.tick.bind(this);
         this.handleStartPause = this.handleStartPause.bind(this);
+        this.handleReset = this.handleReset.bind(this);
     }
 
     //Prototype methods
@@ -184,6 +186,13 @@ class Timer extends React.Component {
 
     }
 
+    handleReset() {
+        //Stop the timer
+        clearInterval(this.timerID);
+        //Reset the timer to the length duration
+        this.setState({ duration: moment.duration(this.state.length, 'minutes') });
+    }
+
     render() {
 
         let timer = (
@@ -195,7 +204,7 @@ class Timer extends React.Component {
                 <button onClick={this.handleStartPause} id="start_stop">
                     Start/Stop
                 </button>
-                <button id="reset">
+                <button onClick={this.handleReset} id="reset">
                     Reset
                 </button>
             </div>
