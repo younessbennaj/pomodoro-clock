@@ -189,6 +189,7 @@ class Timer extends React.Component {
     handleReset() {
         //Stop the timer
         clearInterval(this.timerID);
+        this.setState({ isStarted: false });
         //Reset the timer to the length duration
         this.setState({ duration: moment.duration(this.state.length, 'minutes') });
     }
