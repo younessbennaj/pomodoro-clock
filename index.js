@@ -21,18 +21,32 @@
 
 let app = document.getElementById("app");
 
-const counter = (
-    <div className="counter-wrapper">
-        <label id="label" htmlFor="">counter</label>
-        <p id="length">0</p>
-        <button id="increment">break -</button>
-        <button id="decrement">break +</button>
-    </div>
-);
 
 let test = () => {
-    console.log(this);
+    //console.log({new Date().toLocaleTimeString()});
 }
 
-ReactDOM.render(counter, app);
+//React componenet => JS functions
+//(props) => return ReactElement{}
+function Counter(props) {
+    let counter = (
+        <div className="counter-wrapper">
+            <label id="label" htmlFor="">counter</label>
+            <p id="length">0</p>
+            <button id="increment">count -</button>
+            <button id="decrement">count +</button>
+        </div>
+    );
+
+    return counter;
+}
+
+function App(props) {
+    const app = <Counter count={0} />;
+    return app;
+}
+
+
+ReactDOM.render(<App />, app);
+
 
