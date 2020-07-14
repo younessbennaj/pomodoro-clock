@@ -134,7 +134,7 @@ class Timer extends React.Component {
         super(props);
         this.state = {
             duration: moment.duration(this.props.length, 'minutes'),
-            date: new Date().toLocaleTimeString()
+            isStarted: false
         };
         this.tick = this.tick.bind(this);
         this.handleStartPause = this.handleStartPause.bind(this);
@@ -155,10 +155,7 @@ class Timer extends React.Component {
     //Lifecycle methods
 
     componentDidMount() {
-        this.timerID = setInterval(
-            this.tick,
-            1000
-        );
+
     }
 
     componentWillUnmount() {
@@ -168,7 +165,13 @@ class Timer extends React.Component {
     //Handle methods
 
     handleStartPause() {
-        clearInterval(this.timerID);
+        //Click on start
+        this.timerID = setInterval(
+            this.tick,
+            1000
+        );
+        //Click on pause
+        //clearInterval(this.timerID);
     }
 
     render() {
