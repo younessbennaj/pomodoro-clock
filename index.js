@@ -20,17 +20,19 @@
 /*/
 
 let app = document.getElementById("app");
-let other = "other var";
-let update = "update";
-const element = (
-    <h1 className="greeting">
-        Bonjour, monde ! <span>8</span>
-    </h1>
+
+const counter = (
+    <div className="counter-wrapper">
+        <label id="label" htmlFor="">counter</label>
+        <p id="length">0</p>
+        <button id="increment">break -</button>
+        <button id="decrement">break +</button>
+    </div>
 );
 
 let test = () => {
     console.log(this);
 }
 
-ReactDOM.render(element, app);
+ReactDOM.render(counter, app);
 
