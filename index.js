@@ -31,7 +31,8 @@ class Counter extends React.Component {
     constructor(props) {
         /*
             * super() *
-            * 
+            *
+            
                 super() calls the contructor() method of the parent class React.Component
                 thanks to this, our Counter() class instance inherit from the attributes
                 of the React.Component() class (context, refs, props,...).
@@ -41,14 +42,37 @@ class Counter extends React.Component {
         */
         super(props);
         console.log(this);
+
+        /*
+            * Local state * 
+            * 
+            
+            => private and totally controled by the component
+
+            We want that our component act as pure function with their props. props
+            mutation are not allowed. Thus, we need to use a local state to work with
+            some values without modifying inital props. We store this local state in 
+            a .state proprety. This proprety will be acessible in our component. 
+        
+        */
+
+        this.state = {
+            count: this.props.count
+        };
     }
 
     //Prototype methods => instance inherit from this (accessible via __proto__ props)
-
+    //render() => called each time the view is updated
     render() {
 
         //Our jsx syntax component => react element returned by React.createElement( type , props ,children)
         //=> object that describes our element
+
+        //React element are immutable => don't be modified after its creation.
+        //So we need to re-render our element each time there is a modification.
+        //But a React core principle is that we don't have to update all the node tree 
+
+        //Therfore, here we will only update modified nodes.
         let counter = (
             <div className="counter-wrapper">
                 <label id="label" htmlFor="">counter</label>
@@ -66,12 +90,11 @@ class Counter extends React.Component {
 let counter = new Counter({ count: 0 });
 
 
-// function App(props) {
-//     const app = <Counter count={0} />;
-//     return app;
-// }
+function App(props) {
+    const app = <Counter count={0} />;
+    return app;
+}
 
-
-// ReactDOM.render(<App />, app);
+ReactDOM.render(<App />, app);
 
 
