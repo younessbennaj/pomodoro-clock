@@ -26,27 +26,52 @@ let test = () => {
     //console.log({new Date().toLocaleTimeString()});
 }
 
-//React componenet => JS functions
-//(props) => return ReactElement{}
-function Counter(props) {
-    let counter = (
-        <div className="counter-wrapper">
-            <label id="label" htmlFor="">counter</label>
-            <p id="length">0</p>
-            <button id="increment">count -</button>
-            <button id="decrement">count +</button>
-        </div>
-    );
+class Counter extends React.Component {
 
-    return counter;
+    constructor(props) {
+        /*
+            * super() *
+            * 
+                super() calls the contructor() method of the parent class React.Component
+                thanks to this, our Counter() class instance inherit from the attributes
+                of the React.Component() class (context, refs, props,...).
+                Without this super() method call, we can't use 'this' as a reference to the
+                Counter() class instance.
+            
+        */
+        super(props);
+        console.log(this);
+    }
+
+    //Prototype methods => instance inherit from this (accessible via __proto__ props)
+
+    render() {
+
+        //Our jsx syntax component => react element returned by React.createElement( type , props ,children)
+        //=> object that describes our element
+        let counter = (
+            <div className="counter-wrapper">
+                <label id="label" htmlFor="">counter</label>
+                <p id="length">0</p>
+                <button id="increment">count -</button>
+                <button id="decrement">count +</button>
+            </div>
+        );
+
+        //return our react element object
+        return counter;
+    }
 }
 
-function App(props) {
-    const app = <Counter count={0} />;
-    return app;
-}
+let counter = new Counter({ count: 0 });
 
 
-ReactDOM.render(<App />, app);
+// function App(props) {
+//     const app = <Counter count={0} />;
+//     return app;
+// }
+
+
+// ReactDOM.render(<App />, app);
 
 
