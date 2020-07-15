@@ -79,11 +79,15 @@ class Counter extends React.Component {
     */
 
     handleIncrement(id) {
-        this.increment(id);
+        const { timerIsStarted } = this.props;
+        //If the timer isn't alreay launched
+        if (!timerIsStarted) this.increment(id);
     }
 
     handleDecrement(id) {
-        this.decrement(id);
+        const { timerIsStarted } = this.props;
+        //If the timer isn't alreay launched
+        if (!timerIsStarted) this.decrement(id);
     }
 
     //render() => called each time the view is updated
@@ -114,36 +118,18 @@ class Counter extends React.Component {
 class Timer extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            // duration: convertLengthToDuration(0),
-            isStarted: false
-        };
-        this.tick = this.tick.bind(this);
         this.handleStartPause = this.handleStartPause.bind(this);
         this.handleReset = this.handleReset.bind(this);
     }
 
-    //Prototype methods
-
-    tick() {
-        //We don't want to mutate duration in local state
-        //Each tick with substract 1 second
-        const duration = this.props.duration.subtract(1, 's');
-        //onDurationChange() => Update our duration in the parent component local state
-        this.props.onDurationChange(duration);
-    }
-
     //Lifecycle methods
-
-    componentDidMount() {
-        // const { length } = this.props;
-        // this.props.onDurationChange(length);
-    }
-
     componentDidUpdate() {
-        // const { length } = this.props;
-        // let duration = convertLengthToDuration(length);
-        // this.setState({ duration });
+        const { duration, onReachZero } = this.props;
+        //When a session countdown reaches zero
+        if (duration.minutes() === 0 && duration.seconds() === 0) {
+            clearInterval(this.timerID);
+            onReachZero();
+        }
     }
 
     componentWillUnmount() {
@@ -153,41 +139,21 @@ class Timer extends React.Component {
     //Handle methods
 
     handleStartPause() {
-        //Click on start
-        if (!this.state.isStarted) {
-            //Launch the timer
-            this.timerID = setInterval(
-                this.tick,
-                1000
-            );
-            //Set isStarted to true
-            this.setState({ isStarted: true });
-        }
-        //Click on pause
-        else {
-            //Stop the timer
-            clearInterval(this.timerID);
-            this.setState({ isStarted: false });
-        }
-
+        this.props.onLaunchTimer();
     }
 
     handleReset() {
-        //Stop the timer
         clearInterval(this.timerID);
         this.setState({ isStarted: false });
         this.props.onReset();
-        //Reset the timer to the length duration
-        //this.setState({ duration: moment.duration(this.props.length, 'minutes') });
-        //this.props.onDurationChange()
     }
 
     render() {
-        const { length, duration } = this.props;
+        const { length, duration, label } = this.props;
         let timer = (
             <div className="timer-container">
                 <div className="timer-wrapper">
-                    <label id="timer-label">Session</label>
+                    <label id="timer-label">{label}</label>
                     <p id="time-left">{duration.minutes()}:{duration.seconds()}</p>
                 </div>
                 <button onClick={this.handleStartPause} id="start_stop">
@@ -224,19 +190,25 @@ function convertLengthToDuration(length) {
     return moment.duration(length, 'minutes');
 }
 
+//When a session countdown reaches zero => ?
+
 class App extends React.Component {
 
     constructor(props) {
         super(props);
         const { session, break: breakVal } = this.props;
         this.state = {
+            label: 'session',
             sessionLength: session,
             breakLength: breakVal,
-            duration: convertLengthToDuration(session)
+            duration: convertLengthToDuration(session),
+            timerIsStarted: false
         };
         this.onDefaultChange = this.onDefaultChange.bind(this);
-        this.onDurationChange = this.onDurationChange.bind(this);
         this.onReset = this.onReset.bind(this);
+        this.onReachZero = this.onReachZero.bind(this);
+        this.onLaunchTimer = this.onLaunchTimer.bind(this);
+        this.tick = this.tick.bind(this);
     }
 
     onDefaultChange(length, id) {
@@ -249,8 +221,26 @@ class App extends React.Component {
         }
     }
 
-    onDurationChange(duration) {
-        this.setState({ duration });
+    //Set duration to duration - 1s each tick. 
+    tick() {
+        const { duration } = this.state;
+        //Each tick with substract 1 second
+        this.setState({ duration: duration.subtract(1, 's') });
+    }
+
+
+    onLaunchTimer() {
+        const { timerIsStarted } = this.state;
+
+        if (!timerIsStarted) {
+            this.setState({ timerIsStarted: true });
+            //Launch the timer
+            this.timerID = setInterval(this.tick, 1000);
+        } else {
+            this.setState({ timerIsStarted: false });
+            //Stop the timer
+            clearInterval(this.timerID);
+        }
     }
 
     onReset() {
@@ -262,8 +252,28 @@ class App extends React.Component {
         });
     }
 
+    onReachZero() {
+        console.log('test');
+        const { session, break: breakVal } = this.props;
+        const { label } = this.state;
+        if (label === 'session') {
+            //We set the label to 'break' and init the duration to the break length
+            this.setState({
+                label: 'break',
+                duration: convertLengthToDuration(breakVal)
+            });
+        }
+        if (label === 'break') {
+            //We set the label to 'session' and init the duration to the session length
+            this.setState({
+                label: 'session',
+                duration: convertLengthToDuration(session)
+            });
+        }
+    }
+
     render() {
-        const { breakLength, sessionLength, duration } = this.state;
+        const { breakLength, sessionLength, duration, label, timerIsStarted } = this.state;
         const app = (
             <React.Fragment>
                 <div className="time-btn-container">
@@ -272,19 +282,24 @@ class App extends React.Component {
                         default={breakLength}
                         onDefaultChange={this.onDefaultChange}
                         label={'Break Length'}
+                        timerIsStarted={timerIsStarted}
                     />
                     <Counter
                         id={'session'}
                         default={sessionLength}
                         onDefaultChange={this.onDefaultChange}
                         label={'Session Length'}
+                        timerIsStarted={timerIsStarted}
                     />
                 </div>
                 <Timer
+                    label={label}
                     length={sessionLength}
                     duration={duration}
                     onDurationChange={this.onDurationChange}
                     onReset={this.onReset}
+                    onReachZero={this.onReachZero}
+                    onLaunchTimer={this.onLaunchTimer}
                 />
             </ React.Fragment>
         );
@@ -292,6 +307,6 @@ class App extends React.Component {
     }
 }
 
-ReactDOM.render(<App session={25} break={5} />, app);
+ReactDOM.render(<App session={1} break={1} />, app);
 
 
