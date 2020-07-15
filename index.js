@@ -190,7 +190,7 @@ function convertLengthToDuration(length) {
     return moment.duration(length, 'minutes');
 }
 
-//When a session countdown reaches zero => ?
+const audioSrc = "https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav";
 
 class App extends React.Component {
 
@@ -209,6 +209,8 @@ class App extends React.Component {
         this.onReachZero = this.onReachZero.bind(this);
         this.onLaunchTimer = this.onLaunchTimer.bind(this);
         this.tick = this.tick.bind(this);
+
+        this.audio = React.createRef();
     }
 
     onDefaultChange(length, id) {
@@ -228,6 +230,9 @@ class App extends React.Component {
         this.setState({ duration: duration.subtract(1, 's') });
     }
 
+    beep() {
+        this.audio.current.play();
+    }
 
     onLaunchTimer() {
         const { timerIsStarted } = this.state;
@@ -244,16 +249,22 @@ class App extends React.Component {
     }
 
     onReset() {
+        //Stop and reset the audio element
+        this.audio.current.pause();
+        this.audio.current.currentTime = 0;
+        //Stop the timer
+        clearInterval(this.timerID);
         const { session, break: breakVal } = this.props;
         this.setState({
             sessionLength: session,
             break: breakVal,
-            duration: convertLengthToDuration(session)
+            duration: convertLengthToDuration(session),
+            timerIsStarted: false
         });
     }
 
     onReachZero() {
-        console.log('test');
+        this.beep()
         const { session, break: breakVal } = this.props;
         const { label } = this.state;
         if (label === 'session') {
@@ -292,6 +303,8 @@ class App extends React.Component {
                         timerIsStarted={timerIsStarted}
                     />
                 </div>
+                {/* this.audio => reference to the <audio/> element */}
+                <audio id="beep" src={audioSrc} ref={this.audio}></audio>
                 <Timer
                     label={label}
                     length={sessionLength}
@@ -307,6 +320,6 @@ class App extends React.Component {
     }
 }
 
-ReactDOM.render(<App session={1} break={1} />, app);
+ReactDOM.render(<App session={25} break={5} />, app);
 
 
