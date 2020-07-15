@@ -253,6 +253,7 @@ class App extends React.Component {
     }
 
     onReachZero() {
+        console.log('test');
         const { session, break: breakVal } = this.props;
         const { label } = this.state;
         if (label === 'session') {
