@@ -111,11 +111,6 @@ class Counter extends React.Component {
     }
 }
 
-/*
-    Convert length in duration object with moment.js library
-
-*/
-
 /**
  * Convert length in duration object with moment.js library
  * 
@@ -124,7 +119,6 @@ class Counter extends React.Component {
  */
 
 function convertLengthToDuration(length) {
-    console.log(length);
     return moment.duration(length, 'minutes');
 }
 
@@ -132,6 +126,7 @@ class Timer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            duration: convertLengthToDuration(0),
             isStarted: false
         };
         this.tick = this.tick.bind(this);
@@ -154,7 +149,10 @@ class Timer extends React.Component {
     //Lifecycle methods
 
     componentDidMount() {
-
+        //After the component rendering we set the duration in local state
+        const { length } = this.props;
+        let duration = convertLengthToDuration(length);
+        this.setState({ duration });
     }
 
     componentWillUnmount() {
@@ -188,25 +186,24 @@ class Timer extends React.Component {
         clearInterval(this.timerID);
         this.setState({ isStarted: false });
         //Reset the timer to the length duration
-        this.setState({ duration: moment.duration(this.state.length, 'minutes') });
+        this.setState({ duration: moment.duration(this.props.length, 'minutes') });
     }
 
     render() {
         const { length } = this.props;
-        console.log(length);
-        const duration = convertLengthToDuration(length);
+        const { duration } = this.state;
         let timer = (
             <div className="timer-container">
                 <div className="timer-wrapper">
                     <label id="timer-label">Session</label>
                     <p id="time-left">{duration.minutes()}:{duration.seconds()}</p>
                 </div>
-                {/* <button onClick={this.handleStartPause} id="start_stop">
+                <button onClick={this.handleStartPause} id="start_stop">
                     Start/Stop
                 </button>
                 <button onClick={this.handleReset} id="reset">
                     Reset
-                </button> */}
+                </button>
             </div>
         )
 
