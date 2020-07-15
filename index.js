@@ -282,13 +282,14 @@ class App extends React.Component {
         const { session, break: breakVal } = this.props;
         const { label } = this.state;
         if (label === 'session') {
-            console.log('break');
+            //We set the label to 'break' and init the duration to the break length
             this.setState({
                 label: 'break',
                 duration: convertLengthToDuration(breakVal)
             });
         }
         if (label === 'break') {
+            //We set the label to 'session' and init the duration to the session length
             this.setState({
                 label: 'session',
                 duration: convertLengthToDuration(session)
