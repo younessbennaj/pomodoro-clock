@@ -50,18 +50,6 @@ class Counter extends React.Component {
         this.handleDecrement = this.handleDecrement.bind(this);
     }
 
-    /*
-
-        Component Lifecycle 
-    
-    */
-
-    //After rendering (DOM available)
-    componentDidMount() {
-        //use arrow function to pass context inside the increment method
-        //setTimeout(() => this.increment(), 4000);
-    }
-
     //Prototype methods => instances inherit from methods attached to the prototype props
     //(accessible via __proto__ props)
 
@@ -123,12 +111,27 @@ class Counter extends React.Component {
     }
 }
 
+/*
+    Convert length in duration object with moment.js library
+
+*/
+
+/**
+ * Convert length in duration object with moment.js library
+ * 
+ * @param {number} length - the length to convert in duration.
+ * @return {Object} the object duration from moment.js.
+ */
+
+function convertLengthToDuration(length) {
+    console.log(length);
+    return moment.duration(length, 'minutes');
+}
+
 class Timer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            length: this.props.length,
-            duration: moment.duration(this.props.length, 'minutes'),
             isStarted: false
         };
         this.tick = this.tick.bind(this);
@@ -189,19 +192,21 @@ class Timer extends React.Component {
     }
 
     render() {
-
+        const { length } = this.props;
+        console.log(length);
+        const duration = convertLengthToDuration(length);
         let timer = (
             <div className="timer-container">
                 <div className="timer-wrapper">
                     <label id="timer-label">Session</label>
-                    <p id="time-left">{this.state.duration.minutes()}:{this.state.duration.seconds()}</p>
+                    <p id="time-left">{duration.minutes()}:{duration.seconds()}</p>
                 </div>
-                <button onClick={this.handleStartPause} id="start_stop">
+                {/* <button onClick={this.handleStartPause} id="start_stop">
                     Start/Stop
                 </button>
                 <button onClick={this.handleReset} id="reset">
                     Reset
-                </button>
+                </button> */}
             </div>
         )
 
@@ -250,7 +255,7 @@ class App extends React.Component {
                         label={'Session Length'}
                     />
                 </div>
-                <Timer length={25} />
+                <Timer length={sessionLength} />
             </ React.Fragment>
         );
         return app;
