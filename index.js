@@ -43,10 +43,6 @@ class Counter extends React.Component {
         
         */
 
-        this.state = {
-            count: this.props.default
-        };
-
         //We need to bind this inside our handler to the component itself
         //We can also use arrow function behavior to do this, but it may 
         //have so side effect (re-rendering issues).
@@ -54,35 +50,22 @@ class Counter extends React.Component {
         this.handleDecrement = this.handleDecrement.bind(this);
     }
 
-    /*
-
-        Component Lifecycle 
-    
-    */
-
-    //After rendering (DOM available)
-    componentDidMount() {
-        //use arrow function to pass context inside the increment method
-        //setTimeout(() => this.increment(), 4000);
-    }
-
     //Prototype methods => instances inherit from methods attached to the prototype props
     //(accessible via __proto__ props)
 
     //setState() method inherited from the React.Component() class
 
-    increment() {
-        //destructuring => no mutation of this.state
-        let { count } = this.state;
+    increment(id) {
+        let { default: count, onDefaultChange } = this.props;
         //I should not be able to set a session or break length to > 60
-        if (count < 60) this.setState({ count: ++count });
-
+        if (count < 60) onDefaultChange(++count, id)
     }
 
-    decrement() {
-        let { count } = this.state;
+    decrement(id) {
+        let { default: count, onDefaultChange } = this.props;
+        //onCountChange() => change the value of the count proprety in the local state parent
         //I should not be able to set a session or break length to <= 0
-        if (count > 1) this.setState({ count: --count });
+        if (count > 1) onDefaultChange(--count, id)
     }
 
     /*
@@ -95,18 +78,17 @@ class Counter extends React.Component {
         
     */
 
-    handleIncrement() {
-        this.increment();
+    handleIncrement(id) {
+        this.increment(id);
     }
 
-    handleDecrement() {
-        this.decrement();
+    handleDecrement(id) {
+        this.decrement(id);
     }
 
     //render() => called each time the view is updated
     render() {
-
-        let { id, label } = this.props;
+        let { id, label, default: count } = this.props;
         //Our jsx syntax component => react element returned by React.createElement( type , props ,children)
         //=> object that describes our element
 
@@ -118,9 +100,9 @@ class Counter extends React.Component {
         let counter = (
             <div className="counter-wrapper">
                 <label id={`${id}-label`} htmlFor="">{label}</label>
-                <p id={`${id}-length`}>{this.state.count}</p>
-                <button onClick={this.handleDecrement} id={`${id}-decrement`}>count -</button>
-                <button onClick={this.handleIncrement} id={`${id}-increment`}>count +</button>
+                <p id={`${id}-length`}>{count}</p>
+                <button onClick={() => this.handleDecrement(id)} id={`${id}-decrement`}>count -</button>
+                <button onClick={() => this.handleIncrement(id)} id={`${id}-increment`}>count +</button>
             </div>
         );
 
@@ -129,12 +111,22 @@ class Counter extends React.Component {
     }
 }
 
+/**
+ * Convert length in duration object with moment.js library
+ * 
+ * @param {number} length - the length to convert in duration.
+ * @return {Object} the object duration from moment.js.
+ */
+
+function convertLengthToDuration(length) {
+    return moment.duration(length, 'minutes');
+}
+
 class Timer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            length: this.props.length,
-            duration: moment.duration(this.props.length, 'minutes'),
+            duration: convertLengthToDuration(0),
             isStarted: false
         };
         this.tick = this.tick.bind(this);
@@ -157,7 +149,10 @@ class Timer extends React.Component {
     //Lifecycle methods
 
     componentDidMount() {
-
+        //After the component rendering we set the duration in local state
+        const { length } = this.props;
+        let duration = convertLengthToDuration(length);
+        this.setState({ duration });
     }
 
     componentWillUnmount() {
@@ -191,16 +186,17 @@ class Timer extends React.Component {
         clearInterval(this.timerID);
         this.setState({ isStarted: false });
         //Reset the timer to the length duration
-        this.setState({ duration: moment.duration(this.state.length, 'minutes') });
+        this.setState({ duration: moment.duration(this.props.length, 'minutes') });
     }
 
     render() {
-
+        const { length } = this.props;
+        const { duration } = this.state;
         let timer = (
             <div className="timer-container">
                 <div className="timer-wrapper">
                     <label id="timer-label">Session</label>
-                    <p id="time-left">{this.state.duration.minutes()}:{this.state.duration.seconds()}</p>
+                    <p id="time-left">{duration.minutes()}:{duration.seconds()}</p>
                 </div>
                 <button onClick={this.handleStartPause} id="start_stop">
                     Start/Stop
@@ -215,22 +211,53 @@ class Timer extends React.Component {
     }
 }
 
-function App(props) {
-    const app = (
-        <React.Fragment>
-            <div className="time-btn-container">
-                <Counter id={'break'} default={5} label={'Break Length'} />
-                <Counter id={'session'} default={25} label={'Session Length'} />
-            </div>
-            <Timer length={25} />
-        </ React.Fragment>
-    );
-    return app;
-}
+/*
+    * Lifting up state *
+    * 
+    * 
+    In React => Share state => lifting up in the closest common ancestor.
 
-let time = moment.duration(25, 'minutes');
-console.log(time.minutes());
-console.log(time.seconds());
+    Here our App/ component would be the only "source of thruth".
+
+*/
+
+class App extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = { sessionLength: 25, breakLength: 5 };
+        this.onDefaultChange = this.onDefaultChange.bind(this);
+    }
+
+    onDefaultChange(length, id) {
+        if (id === 'break') this.setState({ breakLength: length });
+        if (id === 'session') this.setState({ sessionLength: length });
+    }
+
+    render() {
+        const { breakLength, sessionLength } = this.state;
+        const app = (
+            <React.Fragment>
+                <div className="time-btn-container">
+                    <Counter
+                        id={'break'}
+                        default={breakLength}
+                        onDefaultChange={this.onDefaultChange}
+                        label={'Break Length'}
+                    />
+                    <Counter
+                        id={'session'}
+                        default={sessionLength}
+                        onDefaultChange={this.onDefaultChange}
+                        label={'Session Length'}
+                    />
+                </div>
+                <Timer length={sessionLength} />
+            </ React.Fragment>
+        );
+        return app;
+    }
+}
 
 ReactDOM.render(<App />, app);
 
