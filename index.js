@@ -79,11 +79,15 @@ class Counter extends React.Component {
     */
 
     handleIncrement(id) {
-        this.increment(id);
+        const { timerIsStarted } = this.props;
+        //If the timer isn't alreay launched
+        if (!timerIsStarted) this.increment(id);
     }
 
     handleDecrement(id) {
-        this.decrement(id);
+        const { timerIsStarted } = this.props;
+        //If the timer isn't alreay launched
+        if (!timerIsStarted) this.decrement(id);
     }
 
     //render() => called each time the view is updated
@@ -118,13 +122,7 @@ class Timer extends React.Component {
         this.handleReset = this.handleReset.bind(this);
     }
 
-    //Prototype methods
-
     //Lifecycle methods
-
-    componentDidMount() {
-    }
-
     componentDidUpdate() {
         const { duration, onReachZero } = this.props;
         //When a session countdown reaches zero
@@ -141,31 +139,7 @@ class Timer extends React.Component {
     //Handle methods
 
     handleStartPause() {
-        //Click on start
-        // if (!this.state.isStarted) {
-        //     //Launch the timer
-        //     this.timerID = setInterval(
-        //         this.tick,
-        //         1000
-        //     );
-        //     //Set isStarted to true
-        //     this.setState({ isStarted: true });
-        // }
-        // //Click on pause
-        // else {
-        //     clearInterval(this.timerID);
-        //     this.setState({ isStarted: false });
-        // }
         this.props.onLaunchTimer();
-
-        // if (!this.state.isStarted) {
-        //     //Launch the timer
-
-        // }
-
-        // else {
-        //     this.props.onStopTimer()
-        // }
     }
 
     handleReset() {
@@ -298,7 +272,7 @@ class App extends React.Component {
     }
 
     render() {
-        const { breakLength, sessionLength, duration, label } = this.state;
+        const { breakLength, sessionLength, duration, label, timerIsStarted } = this.state;
         const app = (
             <React.Fragment>
                 <div className="time-btn-container">
@@ -307,12 +281,14 @@ class App extends React.Component {
                         default={breakLength}
                         onDefaultChange={this.onDefaultChange}
                         label={'Break Length'}
+                        timerIsStarted={timerIsStarted}
                     />
                     <Counter
                         id={'session'}
                         default={sessionLength}
                         onDefaultChange={this.onDefaultChange}
                         label={'Session Length'}
+                        timerIsStarted={timerIsStarted}
                     />
                 </div>
                 <Timer
