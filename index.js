@@ -111,22 +111,11 @@ class Counter extends React.Component {
     }
 }
 
-/**
- * Convert length in duration object with moment.js library
- * 
- * @param {number} length - the length to convert in duration.
- * @return {Object} the object duration from moment.js.
- */
-
-function convertLengthToDuration(length) {
-    return moment.duration(length, 'minutes');
-}
-
 class Timer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            duration: convertLengthToDuration(0),
+            // duration: convertLengthToDuration(0),
             isStarted: false
         };
         this.tick = this.tick.bind(this);
@@ -139,20 +128,22 @@ class Timer extends React.Component {
     tick() {
         //We don't want to mutate duration in local state
         //Each tick with substract 1 second
-        let duration = this.state.duration.subtract(1, 's');
-        //Update our duration with setState()
-        this.setState({
-            duration
-        });
+        const duration = this.props.duration.subtract(1, 's');
+        //onDurationChange() => Update our duration in the parent component local state
+        this.props.onDurationChange(duration);
     }
 
     //Lifecycle methods
 
     componentDidMount() {
-        //After the component rendering we set the duration in local state
-        const { length } = this.props;
-        let duration = convertLengthToDuration(length);
-        this.setState({ duration });
+        // const { length } = this.props;
+        // this.props.onDurationChange(length);
+    }
+
+    componentDidUpdate() {
+        // const { length } = this.props;
+        // let duration = convertLengthToDuration(length);
+        // this.setState({ duration });
     }
 
     componentWillUnmount() {
@@ -185,13 +176,14 @@ class Timer extends React.Component {
         //Stop the timer
         clearInterval(this.timerID);
         this.setState({ isStarted: false });
+        this.props.onReset();
         //Reset the timer to the length duration
-        this.setState({ duration: moment.duration(this.props.length, 'minutes') });
+        //this.setState({ duration: moment.duration(this.props.length, 'minutes') });
+        //this.props.onDurationChange()
     }
 
     render() {
-        const { length } = this.props;
-        const { duration } = this.state;
+        const { length, duration } = this.props;
         let timer = (
             <div className="timer-container">
                 <div className="timer-wrapper">
@@ -221,21 +213,57 @@ class Timer extends React.Component {
 
 */
 
+/**
+ * Convert length in duration object with moment.js library
+ * 
+ * @param {number} length - the length to convert in duration.
+ * @return {Object} the object duration from moment.js.
+ */
+
+function convertLengthToDuration(length) {
+    return moment.duration(length, 'minutes');
+}
+
 class App extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { sessionLength: 25, breakLength: 5 };
+        const { session, break: breakVal } = this.props;
+        this.state = {
+            sessionLength: session,
+            breakLength: breakVal,
+            duration: convertLengthToDuration(session)
+        };
         this.onDefaultChange = this.onDefaultChange.bind(this);
+        this.onDurationChange = this.onDurationChange.bind(this);
+        this.onReset = this.onReset.bind(this);
     }
 
     onDefaultChange(length, id) {
         if (id === 'break') this.setState({ breakLength: length });
-        if (id === 'session') this.setState({ sessionLength: length });
+        if (id === 'session') {
+            this.setState({
+                sessionLength: length,
+                duration: convertLengthToDuration(length)
+            });
+        }
+    }
+
+    onDurationChange(duration) {
+        this.setState({ duration });
+    }
+
+    onReset() {
+        const { session, break: breakVal } = this.props;
+        this.setState({
+            sessionLength: session,
+            break: breakVal,
+            duration: convertLengthToDuration(session)
+        });
     }
 
     render() {
-        const { breakLength, sessionLength } = this.state;
+        const { breakLength, sessionLength, duration } = this.state;
         const app = (
             <React.Fragment>
                 <div className="time-btn-container">
@@ -252,13 +280,18 @@ class App extends React.Component {
                         label={'Session Length'}
                     />
                 </div>
-                <Timer length={sessionLength} />
+                <Timer
+                    length={sessionLength}
+                    duration={duration}
+                    onDurationChange={this.onDurationChange}
+                    onReset={this.onReset}
+                />
             </ React.Fragment>
         );
         return app;
     }
 }
 
-ReactDOM.render(<App />, app);
+ReactDOM.render(<App session={25} break={5} />, app);
 
 
