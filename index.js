@@ -1,12 +1,3 @@
-/*/
-
-    1) When I click the element with the id of reset, any running timer should be
-    stopped, the value within id="break-length" should return to 5, the value
-    within id="session-length" should return to 25, and the element with
-    id="time-left" should reset to it's default state.
-
-/*/
-
 let app = document.getElementById("app");
 
 class Counter extends React.Component {
@@ -105,8 +96,8 @@ class Counter extends React.Component {
             <div className="counter-wrapper">
                 <label id={`${id}-label`} htmlFor="">{label}</label>
                 <p id={`${id}-length`}>{count}</p>
-                <button onClick={() => this.handleDecrement(id)} id={`${id}-decrement`}>count -</button>
-                <button onClick={() => this.handleIncrement(id)} id={`${id}-increment`}>count +</button>
+                <button className="btn" onClick={() => this.handleDecrement(id)} id={`${id}-decrement`}>count -</button>
+                <button className="btn" onClick={() => this.handleIncrement(id)} id={`${id}-increment`}>count +</button>
             </div>
         );
 
@@ -156,10 +147,10 @@ class Timer extends React.Component {
                     <label id="timer-label">{label}</label>
                     <p id="time-left">{duration.minutes()}:{duration.seconds()}</p>
                 </div>
-                <button onClick={this.handleStartPause} id="start_stop">
+                <button className="btn" onClick={this.handleStartPause} id="start_stop">
                     Start/Stop
                 </button>
-                <button onClick={this.handleReset} id="reset">
+                <button className="btn" onClick={this.handleReset} id="reset">
                     Reset
                 </button>
             </div>
