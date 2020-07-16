@@ -93,9 +93,9 @@ class Counter extends React.Component {
 
         //Therfore, here we will only update modified nodes.
         let counter = (
-            <div className="counter-wrapper">
-                <label id={`${id}-label`} htmlFor="">{label}</label>
-                <p id={`${id}-length`}>{count}</p>
+            <div className="counter">
+                <label className="counter__label" id={`${id}-label`} htmlFor="">{label}</label>
+                <p className="counter__display" id={`${id}-length`}>{count}</p>
                 <button className="btn" onClick={() => this.handleDecrement(id)} id={`${id}-decrement`}>count -</button>
                 <button className="btn" onClick={() => this.handleIncrement(id)} id={`${id}-increment`}>count +</button>
             </div>
@@ -142,15 +142,13 @@ class Timer extends React.Component {
     render() {
         const { length, duration, label } = this.props;
         let timer = (
-            <div className="timer-container">
-                <div className="timer-wrapper">
-                    <label id="timer-label">{label}</label>
-                    <p id="time-left">{duration.minutes()}:{duration.seconds()}</p>
-                </div>
-                <button className="btn" onClick={this.handleStartPause} id="start_stop">
+            <div className="timer">
+                <label id="timer__label">{label}</label>
+                <p id="time__display">{duration.minutes()}:{duration.seconds()}</p>
+                <button className="btn btn--secondary" onClick={this.handleStartPause} id="start_stop">
                     Start/Stop
                 </button>
-                <button className="btn" onClick={this.handleReset} id="reset">
+                <button className="btn btn--secondary" onClick={this.handleReset} id="reset">
                     Reset
                 </button>
             </div>
@@ -278,33 +276,36 @@ class App extends React.Component {
         const { breakLength, sessionLength, duration, label, timerIsStarted } = this.state;
         const app = (
             <React.Fragment>
-                <div className="time-btn-container">
-                    <Counter
-                        id={'break'}
-                        default={breakLength}
-                        onDefaultChange={this.onDefaultChange}
-                        label={'Break Length'}
-                        timerIsStarted={timerIsStarted}
-                    />
-                    <Counter
-                        id={'session'}
-                        default={sessionLength}
-                        onDefaultChange={this.onDefaultChange}
-                        label={'Session Length'}
-                        timerIsStarted={timerIsStarted}
+                <div className="widget">
+                    <h1 className="widget__header">Pomodoro Timer</h1>
+                    <div className="time-btn-container">
+                        <Counter
+                            id={'break'}
+                            default={breakLength}
+                            onDefaultChange={this.onDefaultChange}
+                            label={'Break Length'}
+                            timerIsStarted={timerIsStarted}
+                        />
+                        <Counter
+                            id={'session'}
+                            default={sessionLength}
+                            onDefaultChange={this.onDefaultChange}
+                            label={'Session Length'}
+                            timerIsStarted={timerIsStarted}
+                        />
+                    </div>
+                    {/* this.audio => reference to the <audio/> element */}
+                    <audio id="beep" src={audioSrc} ref={this.audio}></audio>
+                    <Timer
+                        label={label}
+                        length={sessionLength}
+                        duration={duration}
+                        onDurationChange={this.onDurationChange}
+                        onReset={this.onReset}
+                        onReachZero={this.onReachZero}
+                        onLaunchTimer={this.onLaunchTimer}
                     />
                 </div>
-                {/* this.audio => reference to the <audio/> element */}
-                <audio id="beep" src={audioSrc} ref={this.audio}></audio>
-                <Timer
-                    label={label}
-                    length={sessionLength}
-                    duration={duration}
-                    onDurationChange={this.onDurationChange}
-                    onReset={this.onReset}
-                    onReachZero={this.onReachZero}
-                    onLaunchTimer={this.onLaunchTimer}
-                />
             </ React.Fragment>
         );
         return app;

@@ -1,10 +1,55 @@
+//Color
+
 $primary-color: #90EE90;
 $dark-primary-color: #56d556;
 $secondary-color: #ee9090;
 $grey-color: #D3D3D3;
 $light-grey-color: #FFFAFA;
+$dark-grey-color: #636363;
 $black-color: #000;
 $white-color: #fff;
+
+//Responsive breakpoints 
+
+// Small tablets and large smartphones (landscape view)
+$screen-sm-min: 576px;
+ 
+// Small tablets (portrait view)
+$screen-md-min: 768px;
+ 
+// Tablets and small desktops
+$screen-lg-min: 992px;
+ 
+// Large tablets and desktops
+$screen-xl-min: 1200px;
+
+// Small devices
+@mixin sm {
+   @media (min-width: #{$screen-sm-min}) {
+       @content;
+   }
+}
+ 
+// Medium devices
+@mixin md {
+   @media (min-width: #{$screen-md-min}) {
+       @content;
+   }
+}
+ 
+// Large devices
+@mixin lg {
+   @media (min-width: #{$screen-lg-min}) {
+       @content;
+   }
+}
+ 
+// Extra large devices
+@mixin xl {
+   @media (min-width: #{$screen-xl-min}) {
+       @content;
+   }
+}
 
 body {
     margin: 0;
@@ -12,42 +57,59 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
+/*/ HEADER /*/
+
 .header {
     height: 10vh;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     background-color: $primary-color;
-}
 
-.header h2 {
-    color: $white-color;
-    margin: 0;
-    padding-left: 1rem;
-    font-weight: initial;
-    font-size: 20px;
-}
+    &__title {
+        color: $white-color;
+        margin: 0;
+        padding-left: 1rem;
+        font-weight: initial;
+        font-size: 20px;
+    }
 
-.emoji {
-    padding-left: 10px;
+    &__emoji {
+        padding-left: 10px;
+    }
 }
 
 .container {
     height: 90vh;
     width: 100vw;
     background-color: $light-grey-color;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.time-btn-container {
-    display: flex;
+.widget {
+    text-align: center;
+    color: $dark-grey-color;
+
+    &__header {
+        
+    }
+}
+
+.timer {
+    text-align: center;
 }
 
 .btn {
     height: 30px;
     width: 50px;
-    background-color: $secondary-color;
-    color: $white-color;
     border: none;
+
+    &--secondary {
+        background-color: $secondary-color;
+        color: $white-color;
+    }
 
 }
 
