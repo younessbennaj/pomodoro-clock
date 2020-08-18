@@ -94,10 +94,12 @@ class Counter extends React.Component {
         //Therfore, here we will only update modified nodes.
         let counter = (
             <div className="counter">
-                <label className="counter__label" id={`${id}-label`} htmlFor="">{label}</label>
-                <p className="counter__display" id={`${id}-length`}>{count}</p>
-                <button className="btn" onClick={() => this.handleDecrement(id)} id={`${id}-decrement`}>count -</button>
-                <button className="btn" onClick={() => this.handleIncrement(id)} id={`${id}-increment`}>count +</button>
+                <div className="counter__content">
+                    <label className="counter__label" id={`${id}-label`} htmlFor="">{label}</label>
+                    <p className="counter__display" id={`${id}-length`}>{count}</p>
+                    <button className="counter__btn" onClick={() => this.handleDecrement(id)} id={`${id}-decrement`}>- </button>
+                    <button className="counter__btn" onClick={() => this.handleIncrement(id)} id={`${id}-increment`}>+ </button>
+                </div>
             </div>
         );
 
@@ -143,14 +145,18 @@ class Timer extends React.Component {
         const { length, duration, label } = this.props;
         let timer = (
             <div className="timer">
-                <label id="timer__label">{label}</label>
-                <p id="time__display">{duration.minutes()}:{duration.seconds()}</p>
-                <button className="btn btn--secondary" onClick={this.handleStartPause} id="start_stop">
-                    Start/Stop
-                </button>
-                <button className="btn btn--secondary" onClick={this.handleReset} id="reset">
-                    Reset
-                </button>
+                <div className="timer__content">
+                    <label className="timer__label">{label}</label>
+                    <p className="timer__display" >{duration.minutes()}:{duration.seconds()}</p>
+                    <div className="btn-container">
+                        <button className="timer__btn" onClick={this.handleStartPause} id="start_stop">
+                            Start/Stop
+                        </button>
+                        <button className="timer__btn" onClick={this.handleReset} id="reset">
+                            Reset
+                        </button>
+                    </div>
+                </div>
             </div>
         )
 
@@ -278,7 +284,18 @@ class App extends React.Component {
             <React.Fragment>
                 <div className="widget">
                     <h1 className="widget__header">Pomodoro Timer</h1>
-                    <div className="time-btn-container">
+                    {/* this.audio => reference to the <audio/> element */}
+                    <audio id="beep" src={audioSrc} ref={this.audio}></audio>
+                    <Timer
+                        label={label}
+                        length={sessionLength}
+                        duration={duration}
+                        onDurationChange={this.onDurationChange}
+                        onReset={this.onReset}
+                        onReachZero={this.onReachZero}
+                        onLaunchTimer={this.onLaunchTimer}
+                    />
+                    <div className="counter-wrapper">
                         <Counter
                             id={'break'}
                             default={breakLength}
@@ -294,17 +311,6 @@ class App extends React.Component {
                             timerIsStarted={timerIsStarted}
                         />
                     </div>
-                    {/* this.audio => reference to the <audio/> element */}
-                    <audio id="beep" src={audioSrc} ref={this.audio}></audio>
-                    <Timer
-                        label={label}
-                        length={sessionLength}
-                        duration={duration}
-                        onDurationChange={this.onDurationChange}
-                        onReset={this.onReset}
-                        onReachZero={this.onReachZero}
-                        onLaunchTimer={this.onLaunchTimer}
-                    />
                 </div>
             </ React.Fragment>
         );
