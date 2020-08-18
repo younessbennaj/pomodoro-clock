@@ -1,0 +1,270 @@
+//Color
+
+$primary-color: #56d556;
+$dark-primary-color: #72bc72;
+$secondary-color: #d55656;
+$grey-color: #D3D3D3;
+$light-grey-color: #FFFAFA;
+$dark-grey-color: #636363;
+$black-color: #000;
+$white-color: #fff;
+
+//REPONSIVE BREAKPOINT MIXINS
+
+//Smartphones 
+$screen-xs-min: 370px;
+
+// Small tablets and large smartphones (landscape view)
+$screen-sm-min: 576px;
+ 
+// Small tablets (portrait view)
+$screen-md-min: 768px;
+ 
+// Tablets and small desktops
+$screen-lg-min: 992px;
+ 
+// Large tablets and desktops
+$screen-xl-min: 1200px;
+
+// Extra small devices
+@mixin xs {
+    @media (min-width: #{$screen-xs-min}) {
+        @content;
+    }
+ }
+
+// Small devices
+@mixin sm {
+   @media (min-width: #{$screen-sm-min}) {
+       @content;
+   }
+}
+ 
+// Medium devices
+@mixin md {
+   @media (min-width: #{$screen-md-min}) {
+       @content;
+   }
+}
+ 
+// Large devices
+@mixin lg {
+   @media (min-width: #{$screen-lg-min}) {
+       @content;
+   }
+}
+ 
+// Extra large devices
+@mixin xl {
+   @media (min-width: #{$screen-xl-min}) {
+       @content;
+   }
+}
+
+//UTILITIES MIXINS 
+
+//Vertical and Horizontal align block element inside block element placed in relative position with fixed width
+@mixin align-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+/*/ HEADER /*/
+
+.header {
+    height: 10vh;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: #56d556;
+
+    &__title {
+        color: $white-color;
+        margin: 0;
+        padding-left: 1rem;
+        font-weight: initial;
+        font-size: 20px;
+    }
+
+    &__emoji {
+        padding-left: 10px;
+    }
+}
+
+// MAIN SECTION
+
+.container {
+    height: 90vh;
+}
+.widget-container {
+    position: relative;
+    height: 100%;
+}
+
+.widget {
+    border: 2px solid lightgrey;
+    color: #5e5e5e;
+    border-radius: 3px;
+    box-sizing: border-box;
+    padding: 1em;
+    width: 25vw;
+    margin: 0 auto;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+
+    @include align-center;
+
+    @include xs {
+        width: 100vw;
+        height: 100%;
+    }
+
+    @include sm {
+        width: 70vw;
+        height: max-content;
+    }
+
+    @include md {
+        width: 55vw;
+        height: max-content;
+    }
+
+    @include lg {
+        width: 45vw;
+        height: max-content;
+    }
+
+    @include xl {
+        width: 35vw;
+        height: max-content;
+    }
+
+    &__header {
+        text-align: center;
+    }
+}
+
+// TIMER
+
+.timer {
+
+    width: 60%;
+    margin: 0 auto;
+    padding: 1.6em;
+    position: relative;
+    border: 2px solid lightgrey;
+    border-radius: 50%;
+    text-align: center;
+
+    &:after {
+        content: "";
+        display: block;
+        padding-bottom: 100%;
+      }
+
+    &__content {
+        position: absolute;
+        width: 100%;
+        height: max-content;
+        padding-top: 1em;
+        padding-bottom: 1em; 
+        @include align-center;
+    }
+
+    &__label {
+        font-size: 1.2em;
+    }
+
+    &__display {
+        font-size: 2.5em;
+        font-weight: bold;
+        margin-top: 0.3em;
+        margin-bottom: 0.3em;
+    }
+
+    &__btn {
+        color: #5e5e5e;
+        border: 1px solid darkgray;
+        border-radius: 3px;
+        outline: none;
+        height: 3em;
+        width: 35%;
+        background-color: transparent;
+        color: black;
+        margin: 0.5em 0.5em;
+        cursor: pointer;
+    }
+}
+
+// COUNTER
+
+.counter-wrapper {
+    display: flex;
+    margin: 1em 0;
+}
+
+.counter {
+    text-align: center;
+    display: inline-block;
+    width: 40%;
+    margin: 1em auto;
+    padding: 1em;
+    border: 2px solid lightgrey;
+    border-radius: 4px;
+    position: relative;
+    box-sizing: border-box;
+
+    &:after {
+        content: "";
+        display: block;
+        padding-bottom: 100%;
+      }
+
+    &__content {
+        width: 100%;
+        height: max-content;
+        @include align-center();
+    }
+
+    &__label {
+        font-size: 0.8em;
+    }
+
+    &__display {
+        font-weight: bold;
+    }
+
+    &__btn {
+        text-align: center;
+        color: #5e5e5e;
+        background-color: transparent;
+        margin: 0 0.5em;
+        height: 1.8em;
+        width: 1.8em;
+        border: 1px solid lightgrey;
+        border-radius: 50%;
+        font-size: initial;
+        padding: 0;
+        cursor: pointer;
+    }
+}
+
+// FOOTER
+
+.footer {
+    background-color: darkgrey;
+    overflow: auto;
+    text-align: right;
+
+    p {
+        padding-right: 1em;
+        font-style: italic;
+    }
+}

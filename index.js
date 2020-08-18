@@ -1,12 +1,3 @@
-/*/
-
-    1) When I click the element with the id of reset, any running timer should be
-    stopped, the value within id="break-length" should return to 5, the value
-    within id="session-length" should return to 25, and the element with
-    id="time-left" should reset to it's default state.
-
-/*/
-
 let app = document.getElementById("app");
 
 class Counter extends React.Component {
@@ -102,11 +93,13 @@ class Counter extends React.Component {
 
         //Therfore, here we will only update modified nodes.
         let counter = (
-            <div className="counter-wrapper">
-                <label id={`${id}-label`} htmlFor="">{label}</label>
-                <p id={`${id}-length`}>{count}</p>
-                <button onClick={() => this.handleDecrement(id)} id={`${id}-decrement`}>count -</button>
-                <button onClick={() => this.handleIncrement(id)} id={`${id}-increment`}>count +</button>
+            <div className="counter">
+                <div className="counter__content">
+                    <label className="counter__label" id={`${id}-label`} htmlFor="">{label}</label>
+                    <p className="counter__display" id={`${id}-length`}>{count}</p>
+                    <button className="counter__btn" onClick={() => this.handleDecrement(id)} id={`${id}-decrement`}>- </button>
+                    <button className="counter__btn" onClick={() => this.handleIncrement(id)} id={`${id}-increment`}>+ </button>
+                </div>
             </div>
         );
 
@@ -151,17 +144,19 @@ class Timer extends React.Component {
     render() {
         const { length, duration, label } = this.props;
         let timer = (
-            <div className="timer-container">
-                <div className="timer-wrapper">
-                    <label id="timer-label">{label}</label>
-                    <p id="time-left">{duration.minutes()}:{duration.seconds()}</p>
+            <div className="timer">
+                <div className="timer__content">
+                    <label className="timer__label">{label}</label>
+                    <p className="timer__display" >{duration.minutes()}:{duration.seconds()}</p>
+                    <div className="btn-container">
+                        <button className="timer__btn" onClick={this.handleStartPause} id="start_stop">
+                            Start/Stop
+                        </button>
+                        <button className="timer__btn" onClick={this.handleReset} id="reset">
+                            Reset
+                        </button>
+                    </div>
                 </div>
-                <button onClick={this.handleStartPause} id="start_stop">
-                    Start/Stop
-                </button>
-                <button onClick={this.handleReset} id="reset">
-                    Reset
-                </button>
             </div>
         )
 
@@ -190,7 +185,7 @@ function convertLengthToDuration(length) {
     return moment.duration(length, 'minutes');
 }
 
-//When a session countdown reaches zero => ?
+const audioSrc = "https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav";
 
 class App extends React.Component {
 
@@ -209,6 +204,8 @@ class App extends React.Component {
         this.onReachZero = this.onReachZero.bind(this);
         this.onLaunchTimer = this.onLaunchTimer.bind(this);
         this.tick = this.tick.bind(this);
+
+        this.audio = React.createRef();
     }
 
     onDefaultChange(length, id) {
@@ -228,6 +225,9 @@ class App extends React.Component {
         this.setState({ duration: duration.subtract(1, 's') });
     }
 
+    beep() {
+        this.audio.current.play();
+    }
 
     onLaunchTimer() {
         const { timerIsStarted } = this.state;
@@ -244,16 +244,22 @@ class App extends React.Component {
     }
 
     onReset() {
+        //Stop and reset the audio element
+        this.audio.current.pause();
+        this.audio.current.currentTime = 0;
+        //Stop the timer
+        clearInterval(this.timerID);
         const { session, break: breakVal } = this.props;
         this.setState({
             sessionLength: session,
             break: breakVal,
-            duration: convertLengthToDuration(session)
+            duration: convertLengthToDuration(session),
+            timerIsStarted: false
         });
     }
 
     onReachZero() {
-        console.log('test');
+        this.beep()
         const { session, break: breakVal } = this.props;
         const { label } = this.state;
         if (label === 'session') {
@@ -276,37 +282,42 @@ class App extends React.Component {
         const { breakLength, sessionLength, duration, label, timerIsStarted } = this.state;
         const app = (
             <React.Fragment>
-                <div className="time-btn-container">
-                    <Counter
-                        id={'break'}
-                        default={breakLength}
-                        onDefaultChange={this.onDefaultChange}
-                        label={'Break Length'}
-                        timerIsStarted={timerIsStarted}
+                <div className="widget">
+                    <h1 className="widget__header">Pomodoro Timer</h1>
+                    {/* this.audio => reference to the <audio/> element */}
+                    <audio id="beep" src={audioSrc} ref={this.audio}></audio>
+                    <Timer
+                        label={label}
+                        length={sessionLength}
+                        duration={duration}
+                        onDurationChange={this.onDurationChange}
+                        onReset={this.onReset}
+                        onReachZero={this.onReachZero}
+                        onLaunchTimer={this.onLaunchTimer}
                     />
-                    <Counter
-                        id={'session'}
-                        default={sessionLength}
-                        onDefaultChange={this.onDefaultChange}
-                        label={'Session Length'}
-                        timerIsStarted={timerIsStarted}
-                    />
+                    <div className="counter-wrapper">
+                        <Counter
+                            id={'break'}
+                            default={breakLength}
+                            onDefaultChange={this.onDefaultChange}
+                            label={'Break Length'}
+                            timerIsStarted={timerIsStarted}
+                        />
+                        <Counter
+                            id={'session'}
+                            default={sessionLength}
+                            onDefaultChange={this.onDefaultChange}
+                            label={'Session Length'}
+                            timerIsStarted={timerIsStarted}
+                        />
+                    </div>
                 </div>
-                <Timer
-                    label={label}
-                    length={sessionLength}
-                    duration={duration}
-                    onDurationChange={this.onDurationChange}
-                    onReset={this.onReset}
-                    onReachZero={this.onReachZero}
-                    onLaunchTimer={this.onLaunchTimer}
-                />
             </ React.Fragment>
         );
         return app;
     }
 }
 
-ReactDOM.render(<App session={1} break={1} />, app);
+ReactDOM.render(<App session={25} break={5} />, app);
 
 

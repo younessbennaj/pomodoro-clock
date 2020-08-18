@@ -6,13 +6,23 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Pomodoro Clock</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dist/style.css">
 </head>
 
 <body>
-    <div class="container">
-        <div id="app"></div>
-    </div>
+    <header class="header">
+        <h2 class="header__title">
+            Pomodoro Clock
+            < 🍅 />
+
+        </h2>
+    </header>
+    <main class="container">
+        <section class="widget-container" id="app"></section>
+    </main>
+    <footer class="footer">
+        <p>© 2020 - Built by Youness Bennaj</p>
+    </footer>
 </body>
 <script src="js/vendor/moment.js"></script>
 <script src="js/vendor/react.development.js"></script>
